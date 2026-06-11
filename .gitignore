@@ -1,0 +1,8 @@
+node_modules/
+server/arena.db
+server/*.db
+client/dist/
+.env
+.env.local
+.DS_Store
+*.log
