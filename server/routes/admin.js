@@ -11,11 +11,13 @@ function generateCode() {
 }
 
 router.get('/generate-codes', (req, res) => {
+  const existingRows = db.prepare('SELECT code_string FROM codes').all();
+  const existing = new Set(existingRows.map((r) => r.code_string));
   const codes = new Set();
-  const existing = new Set(db.prepare('SELECT code_string FROM codes').all().map((r) => r.code_string));
   const insert = db.prepare('INSERT OR IGNORE INTO codes (code_string) VALUES (?)');
 
-  const insertMany = db.transaction(() => {
+  db.exec('BEGIN TRANSACTION');
+  try {
     let attempts = 0;
     while (codes.size < 50 && attempts < 1000) {
       const code = generateCode();
@@ -25,8 +27,11 @@ router.get('/generate-codes', (req, res) => {
       }
       attempts++;
     }
-  });
-  insertMany();
+    db.exec('COMMIT');
+  } catch (e) {
+    db.exec('ROLLBACK');
+    throw e;
+  }
 
   const codeList = [...codes];
   console.log('\n=== 50 NEW CODES GENERATED ===');
