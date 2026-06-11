@@ -87,6 +87,12 @@ export default function Login() {
                 Claim your title
               </Link>
             </p>
+
+            <p className="text-center mt-3">
+              <Link to="/dashboard" className="text-text-muted text-xs hover:text-text-primary transition-colors">
+                ← Back to arena
+              </Link>
+            </p>
           </div>
         </div>
 

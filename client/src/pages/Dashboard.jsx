@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { apiJSON } from '../api';
 import TopBar from '../components/TopBar';
 import HeroStats from '../components/HeroStats';
@@ -12,22 +11,25 @@ import Leaderboard from '../components/Leaderboard';
 import LevelUpOverlay from '../components/LevelUpOverlay';
 
 export default function Dashboard() {
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [levelUp, setLevelUp] = useState(null);
 
   const fetchUser = useCallback(async () => {
+    const token = localStorage.getItem('ua_token');
+    if (!token) {
+      setLoading(false);
+      return;
+    }
     try {
       const data = await apiJSON('/api/user/me');
       setUser(data);
     } catch {
       localStorage.removeItem('ua_token');
-      navigate('/login');
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     fetchUser();
@@ -35,7 +37,7 @@ export default function Dashboard() {
 
   function handleLogout() {
     localStorage.removeItem('ua_token');
-    navigate('/login');
+    setUser(null);
   }
 
   function handleRedemption(result) {
