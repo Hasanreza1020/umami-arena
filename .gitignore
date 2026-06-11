@@ -1,6 +1,8 @@
 node_modules/
 server/arena.db
 server/*.db
+server/*.db-shm
+server/*.db-wal
 client/dist/
 .env
 .env.local
